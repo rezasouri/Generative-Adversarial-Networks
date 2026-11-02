@@ -70,7 +70,7 @@ def test_category_filter_and_dataset_sample_loading(tmp_path: Path) -> None:
     anomaly = next(dataset[index] for index in range(len(dataset)) if dataset[index]["is_anomaly"])
     assert anomaly["image"].mode == "RGB"
     assert anomaly["mask"].mode == "L"
-    assert set(anomaly["mask"].getdata()) == {0, 255}
+    assert set(anomaly["mask"].get_flattened_data()) == {0, 255}
     assert anomaly["label"] == "anomaly"
 
 

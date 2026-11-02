@@ -40,6 +40,8 @@ Requirements: Python 3.10–3.12.
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
 python -m pip install -e ".[dev]"
+# Add PyTorch when installing the training components:
+python -m pip install -e ".[train]"
 forgegan --help
 forgegan audit-dataset --root "src/Dataset" --output reports/legacy-dataset-audit.json
 pytest

@@ -10,6 +10,8 @@ from forgegan import __version__
 from forgegan.data.audit import audit_dataset
 from forgegan.data.mvtec import load_mvtec_records, validate_mvtec_split
 from forgegan.data.visa import load_visa_records, validate_visa_split
+from forgegan.data.registry import DatasetConfig
+from forgegan.data.visualize import inspect_dataset
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -80,6 +82,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="Validate one category instead of all 15.",
     )
     mvtec_parser.add_argument("--output", type=Path, help="Optional path for a JSON report.")
+
+    inspect_parser = subparsers.add_parser(
+        "inspect-dataset", help="Create a contact sheet and sample manifest."
+    )
+    inspect_parser.add_argument("--dataset", choices=["visa", "mvtec"], required=True)
+    inspect_parser.add_argument("--root", type=Path, required=True)
+    inspect_parser.add_argument("--split", choices=["train", "test"], default="train")
+    inspect_parser.add_argument("--category", help="Optional category filter.")
+    inspect_parser.add_argument("--split-file", type=Path, help="VisA 1cls.csv path.")
+    inspect_parser.add_argument("--limit", type=int, default=32)
+    inspect_parser.add_argument("--columns", type=int, default=4)
+    inspect_parser.add_argument("--output-dir", type=Path, default=Path("reports/inspection"))
     return parser
 
 
@@ -116,6 +130,21 @@ def main() -> None:
     if args.command == "validate-mvtec":
         records = load_mvtec_records(args.root, category=args.category)
         _write_report(validate_mvtec_split(records), args.output)
+        return
+    if args.command == "inspect-dataset":
+        config = DatasetConfig(
+            name=args.dataset,
+            root=args.root,
+            split=args.split,
+            category=args.category,
+            split_file=args.split_file,
+        )
+        _write_report(
+            inspect_dataset(
+                config, args.output_dir, limit=args.limit, columns=args.columns
+            ),
+            None,
+        )
         return
     parser.print_help()
 

@@ -23,7 +23,7 @@ Synthetic data is treated as an experimental intervention—not an assumed impro
 - Modular PyTorch training engine
 - DCGAN, conditional GAN, ACGAN and WGAN-GP baselines
 - Mask-conditioned defect synthesis
-- Dataset adapters for MVTec AD and VisA
+- Dataset adapters for MVTec AD and VisA (dataset access and licensing notes in [DATASET_STRATEGY.md](docs/DATASET_STRATEGY.md))
 - Real-only vs. synthetic-augmented anomaly-detection experiments
 - Quantitative evaluation, experiment configs and reproducible reports
 - Optional diffusion baseline and Gradio demo

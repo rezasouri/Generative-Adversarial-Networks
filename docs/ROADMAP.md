@@ -10,7 +10,7 @@ This roadmap distinguishes intended work from delivered functionality.
 - [x] Add contribution and experiment-integrity guidance
 - [x] Add reusable image dataset integrity audit command
 - [x] Audit and document the legacy five-class dataset
-- [ ] Add CI and baseline tests
+- [x] Add CI and baseline tests
 
 ## Milestone 1 — Industrial data pipeline
 

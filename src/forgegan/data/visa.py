@@ -8,9 +8,10 @@ from __future__ import annotations
 
 import csv
 from collections import Counter, defaultdict
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from pathlib import Path, PurePosixPath
-from typing import Any, Callable, Literal
+from typing import Any, Literal
 
 from PIL import Image
 

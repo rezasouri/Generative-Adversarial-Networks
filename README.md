@@ -49,7 +49,7 @@ forgegan validate-mvtec --root datasets/mvtec_ad --category bottle
 pytest
 ```
 
-The CLI provides project information, legacy dataset auditing, VisA split validation and MVTec AD directory validation. The adapters do not download or modify source datasets. GAN training and synthesis remain planned.
+The CLI provides dataset audits and validation. The shared Python dataset registry, spatial transforms and optional PyTorch DataLoader are documented in [DATA_PIPELINE.md](docs/DATA_PIPELINE.md). The adapters do not download or modify source datasets. GAN training and synthesis remain planned.
 
 ## Project principles
 

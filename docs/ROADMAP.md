@@ -14,8 +14,8 @@ This roadmap distinguishes intended work from delivered functionality.
 
 ## Milestone 1 — Industrial data pipeline
 
-- [ ] Verify official MVTec AD access, license/terms and data layout
-- [ ] Verify official VisA access, license/terms and data layout
+- [x] Verify official MVTec AD access, license/terms and data layout
+- [x] Verify official VisA access, license/terms and data layout
 - [ ] Dataset abstraction and deterministic transforms
 - [ ] MVTec AD adapter
 - [ ] VisA adapter

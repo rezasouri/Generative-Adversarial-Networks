@@ -44,6 +44,7 @@ python -m pip install -e ".[dev]"
 python -m pip install -e ".[train]"
 forgegan --help
 forgegan audit-dataset --root "src/Dataset" --output reports/legacy-dataset-audit.json
+forgegan validate-visa --root datasets/visa --split-file datasets/visa/split_csv/1cls.csv
 pytest
 ```
 

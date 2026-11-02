@@ -60,7 +60,7 @@ def test_dataset_loads_rgb_image_and_binary_mask(tmp_path: Path) -> None:
     sample = dataset[anomaly_index]
     assert sample["image"].mode == "RGB"
     assert sample["mask"].mode == "L"
-    assert set(sample["mask"].getdata()) == {0, 255}
+    assert set(sample["mask"].get_flattened_data()) == {0, 255}
     assert sample["defect_type"] == "broken_large"
 
 
@@ -106,7 +106,7 @@ def test_rejects_image_mask_dimension_mismatch(tmp_path: Path) -> None:
     Image.new("L", (8, 8), color=255).save(mask_path)
     dataset = MVTecDataset(root, split="test", category="bottle")
     anomaly_index = next(
-        index for index in range(len(dataset)) if dataset[index]["is_anomaly"]
+        index for index, record in enumerate(dataset.records) if record.is_anomaly
     )
 
     with pytest.raises(ValueError, match="dimensions differ"):

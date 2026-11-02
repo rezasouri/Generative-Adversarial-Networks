@@ -16,10 +16,11 @@ This roadmap distinguishes intended work from delivered functionality.
 
 - [x] Verify official MVTec AD access, license/terms and data layout
 - [x] Verify official VisA access, license/terms and data layout
-- [ ] Dataset abstraction and deterministic transforms
+- [x] Dataset record abstraction and deterministic metadata loading
 - [ ] MVTec AD adapter
-- [ ] VisA adapter
-- [ ] Product/category-level split validation and leakage checks
+- [x] VisA 1-class adapter using the official split CSV
+- [x] Product/category-level source-image split leakage checks
+- [x] VisA metadata and file validation CLI
 - [ ] Dataset inspection utility and sample visualizations
 
 ## Milestone 2 — Generative baselines

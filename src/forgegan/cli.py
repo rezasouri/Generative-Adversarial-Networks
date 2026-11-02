@@ -8,6 +8,7 @@ from pathlib import Path
 
 from forgegan import __version__
 from forgegan.data.audit import audit_dataset
+from forgegan.data.mvtec import load_mvtec_records, validate_mvtec_split
 from forgegan.data.visa import load_visa_records, validate_visa_split
 
 
@@ -59,6 +60,26 @@ def build_parser() -> argparse.ArgumentParser:
         help="Validate CSV structure and split integrity without checking image/mask files.",
     )
     visa_parser.add_argument("--output", type=Path, help="Optional path for a JSON report.")
+
+    mvtec_parser = subparsers.add_parser(
+        "validate-mvtec", help="Validate the MVTec AD directory layout and annotations."
+    )
+    mvtec_parser.add_argument(
+        "--root",
+        type=Path,
+        default=Path("datasets/mvtec_ad"),
+        help="Extracted MVTec AD root (default: datasets/mvtec_ad).",
+    )
+    mvtec_parser.add_argument(
+        "--category",
+        choices=[
+            "bottle", "cable", "capsule", "carpet", "grid", "hazelnut", "leather",
+            "metal_nut", "pill", "screw", "tile", "toothbrush", "transistor", "wood",
+            "zipper",
+        ],
+        help="Validate one category instead of all 15.",
+    )
+    mvtec_parser.add_argument("--output", type=Path, help="Optional path for a JSON report.")
     return parser
 
 
@@ -91,6 +112,10 @@ def main() -> None:
         report = validate_visa_split(records)
         report["file_checks_performed"] = not args.skip_file_check
         _write_report(report, args.output)
+        return
+    if args.command == "validate-mvtec":
+        records = load_mvtec_records(args.root, category=args.category)
+        _write_report(validate_mvtec_split(records), args.output)
         return
     parser.print_help()
 

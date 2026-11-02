@@ -4,7 +4,7 @@
 
 ForgeGAN is an open, reproducible research and engineering project for studying whether controlled synthetic defect generation can improve industrial visual anomaly detection.
 
-> Status: foundation phase. The original 2023 Keras notebooks are preserved under `src/` as historical experiments; the modern implementation is being built independently with PyTorch.
+> Status: industrial dataset pipeline. VisA and MVTec AD read-only adapters and validation commands are available. The original 2023 Keras notebooks are preserved under `src/` as historical experiments; the modern implementation is being built independently with PyTorch.
 
 ## Why ForgeGAN?
 
@@ -45,10 +45,11 @@ python -m pip install -e ".[train]"
 forgegan --help
 forgegan audit-dataset --root "src/Dataset" --output reports/legacy-dataset-audit.json
 forgegan validate-visa --root datasets/visa --split-file datasets/visa/split_csv/1cls.csv
+forgegan validate-mvtec --root datasets/mvtec_ad --category bottle
 pytest
 ```
 
-The initial CLI exposes project and environment information. Training and dataset commands will be added in subsequent milestones.
+The CLI provides project information, legacy dataset auditing, VisA split validation and MVTec AD directory validation. The adapters do not download or modify source datasets. GAN training and synthesis remain planned.
 
 ## Project principles
 

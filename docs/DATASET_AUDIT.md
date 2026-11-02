@@ -19,7 +19,7 @@ The GitHub repository API was used to enumerate every class directory and inspec
 
 - All 1,005 tracked files use the `.png` extension.
 - All 1,005 files have distinct Git blob identities; no byte-identical duplicates were found.
-- A representative image from Class 1 has PNG dimensions of 32 × 32 pixels. The sample images inspected visually resemble small binary hand/finger gesture silhouettes. This visual impression is not a verified dataset label or provenance.
+- The sampled image at index 0 from each of the five classes has PNG dimensions of 32 × 32 pixels. The sample images inspected visually resemble small binary hand/finger gesture silhouettes. This visual impression is not a verified dataset label or provenance.
 - The repository does not provide a dataset citation, collection protocol, subject identity, capture conditions, image license, or reliable class-name mapping. Keep the labels as `Class 1` … `Class 5` until authoritative metadata is found.
 
 ## Legacy notebook risks

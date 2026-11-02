@@ -17,6 +17,9 @@ This roadmap distinguishes intended work from delivered functionality.
 - [x] Verify official MVTec AD access, license/terms and data layout
 - [x] Verify official VisA access, license/terms and data layout
 - [x] Dataset record abstraction and deterministic metadata loading
+- [x] Unified dataset registry and normalized sample schema
+- [x] Deterministic image/mask resize transforms
+- [x] Optional reproducibly seeded PyTorch DataLoader factory
 - [x] MVTec AD adapter using the official train/test/ground-truth layout
 - [x] VisA 1-class adapter using the official split CSV
 - [x] Product/category-level source-image split leakage checks

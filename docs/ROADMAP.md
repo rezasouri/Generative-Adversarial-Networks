@@ -8,14 +8,18 @@ This roadmap distinguishes intended work from delivered functionality.
 - [x] Preserve original notebooks as historical material
 - [x] Add installable PyTorch package scaffold and CLI
 - [x] Add contribution and experiment-integrity guidance
+- [x] Add reusable image dataset integrity audit command
+- [x] Audit and document the legacy five-class dataset
 - [ ] Add CI and baseline tests
 
-## Milestone 1 — Data pipeline
+## Milestone 1 — Industrial data pipeline
 
+- [ ] Verify official MVTec AD access, license/terms and data layout
+- [ ] Verify official VisA access, license/terms and data layout
 - [ ] Dataset abstraction and deterministic transforms
 - [ ] MVTec AD adapter
 - [ ] VisA adapter
-- [ ] Split validation and leakage checks
+- [ ] Product/category-level split validation and leakage checks
 - [ ] Dataset inspection utility and sample visualizations
 
 ## Milestone 2 — Generative baselines

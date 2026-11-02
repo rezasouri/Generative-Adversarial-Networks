@@ -274,6 +274,7 @@ class MVTecDataset:
     def __getitem__(self, index: int) -> dict[str, Any]:
         record = self.records[index]
         with Image.open(record.image_path) as source:
+            image_size = source.size
             image = source.convert("RGB")
         if self.image_transform is not None:
             image = self.image_transform(image)
@@ -282,10 +283,10 @@ class MVTecDataset:
         if record.mask_path is not None:
             with Image.open(record.mask_path) as source:
                 mask = source.copy()
-            if mask.size != Image.open(record.image_path).size:
+            if mask.size != image_size:
                 raise ValueError(
                     f"MVTec image/mask dimensions differ for {record.image_path}: "
-                    f"{Image.open(record.image_path).size} vs {mask.size}"
+                    f"{image_size} vs {mask.size}"
                 )
             if self.mask_mode == "binary":
                 mask = mask.convert("L").point(lambda value: 255 if value > 0 else 0)

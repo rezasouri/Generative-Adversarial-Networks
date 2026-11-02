@@ -67,7 +67,11 @@ def test_dataset_loads_rgb_image_and_binary_mask(tmp_path: Path) -> None:
 def test_normal_samples_have_no_mask(tmp_path: Path) -> None:
     root = _make_mvtec_root(tmp_path)
     dataset = MVTecDataset(root, split="test", category="bottle")
-    normal = next(dataset[index] for index in range(len(dataset)) if not dataset[index]["is_anomaly"])
+    normal = next(
+        dataset[index]
+        for index in range(len(dataset))
+        if not dataset[index]["is_anomaly"]
+    )
 
     assert normal["label"] == "normal"
     assert normal["mask"] is None

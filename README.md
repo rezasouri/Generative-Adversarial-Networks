@@ -41,6 +41,7 @@ python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
 python -m pip install -e ".[dev]"
 forgegan --help
+forgegan audit-dataset --root "src/Dataset" --output reports/legacy-dataset-audit.json
 pytest
 ```
 

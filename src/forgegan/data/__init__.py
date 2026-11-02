@@ -11,6 +11,7 @@ from forgegan.data.registry import (
     validate_source_splits,
 )
 from forgegan.data.transforms import SpatialTransform
+from forgegan.data.visualize import inspect_dataset
 from forgegan.data.visa import VisaDataset, VisaRecord, load_visa_records, validate_visa_split
 
 __all__ = [
@@ -26,6 +27,7 @@ __all__ = [
     "collate_anomaly_samples",
     "create_dataloader",
     "create_dataset",
+    "inspect_dataset",
     "load_mvtec_records",
     "load_visa_records",
     "validate_mvtec_split",

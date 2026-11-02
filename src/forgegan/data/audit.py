@@ -20,7 +20,11 @@ def audit_dataset(root: str | Path) -> dict[str, Any]:
         raise FileNotFoundError(f"Dataset directory does not exist: {dataset_root}")
 
     class_dirs = sorted(
-        (path for path in dataset_root.iterdir() if path.is_dir() and path.name.startswith("Class ")),
+        (
+            path
+            for path in dataset_root.iterdir()
+            if path.is_dir() and path.name.startswith("Class ")
+        ),
         key=lambda path: path.name,
     )
     if not class_dirs:

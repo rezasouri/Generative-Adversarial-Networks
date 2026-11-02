@@ -49,7 +49,7 @@ forgegan validate-mvtec --root datasets/mvtec_ad --category bottle
 pytest
 ```
 
-The CLI provides dataset audits and validation. The shared Python dataset registry, spatial transforms and optional PyTorch DataLoader are documented in [DATA_PIPELINE.md](docs/DATA_PIPELINE.md). The adapters do not download or modify source datasets. GAN training and synthesis remain planned.
+The CLI provides dataset audits and validation. The shared Python dataset registry, spatial transforms and optional PyTorch DataLoader are documented in [DATA_PIPELINE.md](docs/DATA_PIPELINE.md). Dataset inspection and versioned experiment configs are covered in [EXPERIMENT_TOOLING.md](docs/EXPERIMENT_TOOLING.md). The adapters do not download or modify source datasets. GAN training and synthesis remain planned.
 
 ## Project principles
 

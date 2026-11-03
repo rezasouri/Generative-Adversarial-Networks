@@ -25,7 +25,9 @@ This roadmap distinguishes intended work from delivered functionality.
 - [x] Product/category-level source-image split leakage checks
 - [x] VisA metadata and file validation CLI
 - [x] MVTec metadata, annotation and image-mask validation CLI
-- [ ] Dataset inspection utility and sample visualizations
+- [x] Dataset inspection utility and sample visualizations
+- [x] Strict versioned YAML experiment configuration
+- [x] Optional PyTorch-enabled DataLoader CI job
 
 ## Milestone 2 — Generative baselines
 

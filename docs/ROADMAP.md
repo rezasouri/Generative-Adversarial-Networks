@@ -41,10 +41,13 @@ This roadmap distinguishes intended work from delivered functionality.
 
 ## Milestone 3 — Defect synthesis
 
-- [ ] Defect-mask conditioning and compositing strategy
-- [ ] Controls for defect category, position and scale
+- [x] Procedural binary defect masks and masked-intensity compositing baseline
+- [ ] Learned mask-conditioned defect generator
+- [x] Procedural defect type (spot/scratch), position, scale and opacity controls
+- [ ] Learned defect-category conditioning
 - [ ] Diversity and artifact analysis
-- [ ] Human-reviewable synthetic sample gallery
+- [x] Synthetic image/mask pairs and traceable JSON manifest
+- [ ] Dedicated synthetic sample gallery
 
 ## Milestone 4 — Downstream evaluation
 

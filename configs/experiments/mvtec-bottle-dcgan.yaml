@@ -12,11 +12,14 @@ dataset:
 model:
   name: dcgan
   latent_dim: 128
+  features: 64
   image_channels: 3
 
 training:
   epochs: 100
   batch_size: 32
   learning_rate: 0.0002
+  beta1: 0.5
+  beta2: 0.999
 
 output_dir: runs/mvtec-bottle-dcgan-baseline

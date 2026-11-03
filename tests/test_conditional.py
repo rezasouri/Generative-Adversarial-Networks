@@ -9,6 +9,7 @@ pytest.importorskip("torchvision")
 
 from PIL import Image  # noqa: E402
 
+from forgegan.data.mvtec import MVTEC_CATEGORIES  # noqa: E402
 from forgegan.experiments.config import load_experiment_config  # noqa: E402
 from forgegan.models.conditional import (  # noqa: E402
     ConditionalDiscriminator,
@@ -19,7 +20,7 @@ from forgegan.training.conditional import train_cgan  # noqa: E402
 
 def _fixture(tmp_path: Path, *, epochs: int = 1, one_category: bool = False) -> Path:
     root = tmp_path / "mvtec"
-    categories = ["bottle"] if one_category else ["bottle", "cable"]
+    categories = ["bottle"] if one_category else list(MVTEC_CATEGORIES)
     for category in categories:
         base = root / category
         for index in range(2):
@@ -70,12 +71,12 @@ def test_conditional_training_and_resume(tmp_path: Path) -> None:
     config_path = _fixture(tmp_path)
     first = train_cgan(load_experiment_config(config_path), device="cpu")
     checkpoint = Path(first["checkpoint"])
-    assert first["categories"] == ["bottle", "cable"]
+    assert first["categories"] == sorted(MVTEC_CATEGORIES)
     assert checkpoint.is_file()
     state = torch.load(checkpoint, weights_only=True)
     assert state["epoch"] == 1
     assert state["global_steps"] == 1
-    assert state["categories"] == ["bottle", "cable"]
+    assert state["categories"] == sorted(MVTEC_CATEGORIES)
     assert (tmp_path / "runs/conditional/samples/epoch-0001.png").is_file()
 
     _fixture(tmp_path, epochs=2)

@@ -101,6 +101,15 @@ def build_parser() -> argparse.ArgumentParser:
     train_parser.add_argument("--config", type=Path, required=True)
     train_parser.add_argument("--resume", type=Path, help="Resume an epoch checkpoint.")
     train_parser.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
+
+    conditional_parser = subparsers.add_parser(
+        "train-cgan", help="Train category-conditional GAN on normal training images."
+    )
+    conditional_parser.add_argument("--config", type=Path, required=True)
+    conditional_parser.add_argument("--resume", type=Path)
+    conditional_parser.add_argument(
+        "--device", choices=["auto", "cpu", "cuda"], default="auto"
+    )
     return parser
 
 
@@ -160,6 +169,16 @@ def main() -> None:
         experiment = load_experiment_config(args.config)
         _write_report(
             train_dcgan(experiment, resume=args.resume, device=args.device),
+            None,
+        )
+        return
+    if args.command == "train-cgan":
+        from forgegan.experiments.config import load_experiment_config
+        from forgegan.training.conditional import train_cgan
+
+        experiment = load_experiment_config(args.config)
+        _write_report(
+            train_cgan(experiment, resume=args.resume, device=args.device),
             None,
         )
         return

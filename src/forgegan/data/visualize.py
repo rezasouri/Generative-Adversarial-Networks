@@ -63,7 +63,10 @@ def inspect_dataset(
                 (min(72, width // 3), min(48, height // 6)),
                 Image.Resampling.NEAREST,
             )
-            sheet.paste(mask_preview.convert("RGB"), (x + width - mask_preview.width - 8, y + height - 56))
+            sheet.paste(
+                mask_preview.convert("RGB"),
+                (x + width - mask_preview.width - 8, y + height - 56),
+            )
 
         manifest.append(
             {

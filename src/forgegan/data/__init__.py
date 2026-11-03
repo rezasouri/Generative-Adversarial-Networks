@@ -11,8 +11,8 @@ from forgegan.data.registry import (
     validate_source_splits,
 )
 from forgegan.data.transforms import SpatialTransform
-from forgegan.data.visualize import inspect_dataset
 from forgegan.data.visa import VisaDataset, VisaRecord, load_visa_records, validate_visa_split
+from forgegan.data.visualize import inspect_dataset
 
 __all__ = [
     "DATASET_NAMES",

@@ -110,6 +110,24 @@ def build_parser() -> argparse.ArgumentParser:
     conditional_parser.add_argument(
         "--device", choices=["auto", "cpu", "cuda"], default="auto"
     )
+
+    synthesis_parser = subparsers.add_parser(
+        "synthesize-defects",
+        help="Create labeled procedural defect/mask pairs from normal train images.",
+    )
+    synthesis_parser.add_argument("--dataset", choices=["visa", "mvtec"], required=True)
+    synthesis_parser.add_argument("--root", type=Path, required=True)
+    synthesis_parser.add_argument("--category", required=True)
+    synthesis_parser.add_argument("--split-file", type=Path, help="VisA 1cls.csv path.")
+    synthesis_parser.add_argument("--output-dir", type=Path, required=True)
+    synthesis_parser.add_argument("--kind", choices=["spot", "scratch"], default="spot")
+    synthesis_parser.add_argument("--center-x", type=float, default=0.5)
+    synthesis_parser.add_argument("--center-y", type=float, default=0.5)
+    synthesis_parser.add_argument("--scale", type=float, default=0.12)
+    synthesis_parser.add_argument("--opacity", type=float, default=0.75)
+    synthesis_parser.add_argument("--angle", type=float, default=30.0)
+    synthesis_parser.add_argument("--count", type=int, default=32)
+    synthesis_parser.add_argument("--seed", type=int, default=42)
     return parser
 
 
@@ -127,7 +145,7 @@ def main() -> None:
     if args.command == "info":
         print(f"ForgeGAN {__version__}")
         print("Status: foundation and industrial dataset pipeline")
-        print("DCGAN training is available; controlled defect synthesis is planned.")
+        print("DCGAN, category cGAN, and procedural defect synthesis are available.")
         return
     if args.command == "audit-dataset":
         _write_report(audit_dataset(args.root), args.output)
@@ -179,6 +197,31 @@ def main() -> None:
         experiment = load_experiment_config(args.config)
         _write_report(
             train_cgan(experiment, resume=args.resume, device=args.device),
+            None,
+        )
+        return
+    if args.command == "synthesize-defects":
+        from forgegan.synthesis.procedural import DefectSpec, generate_synthetic_dataset
+
+        spec = DefectSpec(
+            kind=args.kind,
+            center_x=args.center_x,
+            center_y=args.center_y,
+            scale=args.scale,
+            opacity=args.opacity,
+            angle_degrees=args.angle,
+        )
+        config = DatasetConfig(
+            name=args.dataset,
+            root=args.root,
+            split="train",
+            category=args.category,
+            split_file=args.split_file,
+        )
+        _write_report(
+            generate_synthetic_dataset(
+                config, args.output_dir, spec=spec, count=args.count, seed=args.seed
+            ),
             None,
         )
         return

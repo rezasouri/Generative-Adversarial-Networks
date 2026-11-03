@@ -20,7 +20,7 @@ Synthetic data is treated as an experimental intervention—not an assumed impro
 
 ## Planned capabilities
 
-- Modular PyTorch training engine
+- Modular PyTorch training engine (initial DCGAN baseline implemented)
 - DCGAN, conditional GAN, ACGAN and WGAN-GP baselines
 - Mask-conditioned defect synthesis
 - Dataset adapters for MVTec AD and VisA (dataset access and licensing notes in [DATASET_STRATEGY.md](docs/DATASET_STRATEGY.md))
@@ -46,10 +46,12 @@ forgegan --help
 forgegan audit-dataset --root "src/Dataset" --output reports/legacy-dataset-audit.json
 forgegan validate-visa --root datasets/visa --split-file datasets/visa/split_csv/1cls.csv
 forgegan validate-mvtec --root datasets/mvtec_ad --category bottle
+# After obtaining the dataset archive:
+forgegan train-dcgan --config configs/experiments/mvtec-bottle-dcgan.yaml
 pytest
 ```
 
-The CLI provides dataset audits and validation. The shared Python dataset registry, spatial transforms and optional PyTorch DataLoader are documented in [DATA_PIPELINE.md](docs/DATA_PIPELINE.md). Dataset inspection and versioned experiment configs are covered in [EXPERIMENT_TOOLING.md](docs/EXPERIMENT_TOOLING.md). The adapters do not download or modify source datasets. GAN training and synthesis remain planned.
+The CLI provides dataset audits and validation. The shared Python dataset registry, spatial transforms and optional PyTorch DataLoader are documented in [DATA_PIPELINE.md](docs/DATA_PIPELINE.md). Dataset inspection and versioned experiment configs are covered in [EXPERIMENT_TOOLING.md](docs/EXPERIMENT_TOOLING.md). The adapters do not download or modify source datasets. Unconditional DCGAN training is available; controlled defect synthesis and downstream evaluation remain planned. See [DCGAN training guide](docs/DCGAN_TRAINING.md).
 
 ## Project principles
 

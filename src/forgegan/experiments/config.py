@@ -71,10 +71,18 @@ def load_experiment_config(path: str | Path) -> ExperimentConfig:
         raise ValueError("dataset.root must be a non-empty path string")
     if dataset["name"] == "mvtec" and dataset.get("split_file") is not None:
         raise ValueError("MVTec does not use split_file")
+    if dataset.get("verify_files", True) not in (True, False):
+        raise ValueError("dataset.verify_files must be boolean")
 
     model = _require_mapping(raw["model"], "model")
     if not isinstance(model.get("name"), str) or not model["name"]:
         raise ValueError("model.name must be a non-empty string")
+    if model["name"] == "dcgan":
+        unknown_model = set(model) - {
+            "name", "latent_dim", "features", "image_channels"
+        }
+        if unknown_model:
+            raise ValueError(f"Unknown DCGAN model keys: {sorted(unknown_model)}")
 
     training = _require_mapping(raw["training"], "training")
     epochs = training.get("epochs")

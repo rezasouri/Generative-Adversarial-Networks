@@ -22,9 +22,9 @@ def _fixture(tmp_path: Path, *, epochs: int = 1) -> Path:
         Image.new("RGB", (64, 64), (index * 40 + 50, 80, 120)).save(path)
 
     base = root / "bottle"
-    (base / "test" / "good").mkdir(parents=True)
+    (base / "test" / "good").mkdir(parents=True, exist_ok=True)
     Image.new("RGB", (64, 64), (10, 20, 30)).save(base / "test/good/000.png")
-    (base / "ground_truth").mkdir()
+    (base / "ground_truth").mkdir(exist_ok=True)
 
     yaml_path = tmp_path / "smoke.yaml"
     yaml_path.write_text(

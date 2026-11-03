@@ -32,7 +32,8 @@ This roadmap distinguishes intended work from delivered functionality.
 ## Milestone 2 — Generative baselines
 
 - [x] DCGAN 64x64 unconditional baseline with train/resume smoke tests
-- [ ] Conditional GAN with mask/class conditioning
+- [x] Category-conditioned GAN (normal train images, class labels)
+- [ ] Mask/defect-conditioned synthesis with authorized defect training data
 - [ ] ACGAN baseline
 - [ ] WGAN-GP (gradient penalty; no weight clipping)
 - [x] DCGAN epoch checkpointing, resume, fixed-noise sample grids

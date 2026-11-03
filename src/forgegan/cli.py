@@ -9,8 +9,8 @@ from pathlib import Path
 from forgegan import __version__
 from forgegan.data.audit import audit_dataset
 from forgegan.data.mvtec import load_mvtec_records, validate_mvtec_split
-from forgegan.data.visa import load_visa_records, validate_visa_split
 from forgegan.data.registry import DatasetConfig
+from forgegan.data.visa import load_visa_records, validate_visa_split
 from forgegan.data.visualize import inspect_dataset
 
 

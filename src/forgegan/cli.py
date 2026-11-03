@@ -94,6 +94,13 @@ def build_parser() -> argparse.ArgumentParser:
     inspect_parser.add_argument("--limit", type=int, default=32)
     inspect_parser.add_argument("--columns", type=int, default=4)
     inspect_parser.add_argument("--output-dir", type=Path, default=Path("reports/inspection"))
+
+    train_parser = subparsers.add_parser(
+        "train-dcgan", help="Train unconditional 64x64 DCGAN on normal images."
+    )
+    train_parser.add_argument("--config", type=Path, required=True)
+    train_parser.add_argument("--resume", type=Path, help="Resume an epoch checkpoint.")
+    train_parser.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
     return parser
 
 
@@ -111,7 +118,7 @@ def main() -> None:
     if args.command == "info":
         print(f"ForgeGAN {__version__}")
         print("Status: foundation and industrial dataset pipeline")
-        print("GAN training and defect synthesis are not yet available.")
+        print("DCGAN training is available; controlled defect synthesis is planned.")
         return
     if args.command == "audit-dataset":
         _write_report(audit_dataset(args.root), args.output)
@@ -143,6 +150,16 @@ def main() -> None:
             inspect_dataset(
                 config, args.output_dir, limit=args.limit, columns=args.columns
             ),
+            None,
+        )
+        return
+    if args.command == "train-dcgan":
+        from forgegan.experiments.config import load_experiment_config
+        from forgegan.training.dcgan import train_dcgan
+
+        experiment = load_experiment_config(args.config)
+        _write_report(
+            train_dcgan(experiment, resume=args.resume, device=args.device),
             None,
         )
         return

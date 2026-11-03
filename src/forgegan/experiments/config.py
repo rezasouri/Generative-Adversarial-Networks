@@ -77,12 +77,12 @@ def load_experiment_config(path: str | Path) -> ExperimentConfig:
     model = _require_mapping(raw["model"], "model")
     if not isinstance(model.get("name"), str) or not model["name"]:
         raise ValueError("model.name must be a non-empty string")
-    if model["name"] == "dcgan":
+    if model["name"] in {"dcgan", "cgan"}:
         unknown_model = set(model) - {
             "name", "latent_dim", "features", "image_channels"
         }
         if unknown_model:
-            raise ValueError(f"Unknown DCGAN model keys: {sorted(unknown_model)}")
+            raise ValueError(f"Unknown GAN model keys: {sorted(unknown_model)}")
 
     training = _require_mapping(raw["training"], "training")
     epochs = training.get("epochs")

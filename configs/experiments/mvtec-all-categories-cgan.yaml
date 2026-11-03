@@ -1,0 +1,25 @@
+version: 1
+name: mvtec-all-categories-cgan
+seed: 42
+
+dataset:
+  name: mvtec
+  root: datasets/mvtec_ad
+  split: train
+  category: null
+  verify_files: true
+
+model:
+  name: cgan
+  latent_dim: 128
+  features: 64
+  image_channels: 3
+
+training:
+  epochs: 100
+  batch_size: 32
+  learning_rate: 0.0002
+  beta1: 0.5
+  beta2: 0.999
+
+output_dir: runs/mvtec-all-categories-cgan

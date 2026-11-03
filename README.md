@@ -48,10 +48,12 @@ forgegan validate-visa --root datasets/visa --split-file datasets/visa/split_csv
 forgegan validate-mvtec --root datasets/mvtec_ad --category bottle
 # After obtaining the dataset archive:
 forgegan train-dcgan --config configs/experiments/mvtec-bottle-dcgan.yaml
+# Category-conditioned generation needs the complete multi-category dataset:
+forgegan train-cgan --config configs/experiments/mvtec-all-categories-cgan.yaml
 pytest
 ```
 
-The CLI provides dataset audits and validation. The shared Python dataset registry, spatial transforms and optional PyTorch DataLoader are documented in [DATA_PIPELINE.md](docs/DATA_PIPELINE.md). Dataset inspection and versioned experiment configs are covered in [EXPERIMENT_TOOLING.md](docs/EXPERIMENT_TOOLING.md). The adapters do not download or modify source datasets. Unconditional DCGAN training is available; controlled defect synthesis and downstream evaluation remain planned. See [DCGAN training guide](docs/DCGAN_TRAINING.md).
+The CLI provides dataset audits and validation. The shared Python dataset registry, spatial transforms and optional PyTorch DataLoader are documented in [DATA_PIPELINE.md](docs/DATA_PIPELINE.md). Dataset inspection and versioned experiment configs are covered in [EXPERIMENT_TOOLING.md](docs/EXPERIMENT_TOOLING.md). The adapters do not download or modify source datasets. Unconditional DCGAN and normal-image category-conditional GAN training are available; controlled **defect** synthesis and downstream evaluation remain planned. See [DCGAN training guide](docs/DCGAN_TRAINING.md) and [conditional GAN guide](docs/CONDITIONAL_GAN.md).
 
 ## Project principles
 

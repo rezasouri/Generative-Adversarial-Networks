@@ -13,7 +13,6 @@ from PIL import Image
 from forgegan.data.registry import DatasetConfig, create_dataset
 from forgegan.evaluation.baseline import _image_score, _rgb, _sha256
 from forgegan.evaluation.metrics import binary_metrics
-from forgegan.models.autoencoder import ConvAutoencoder
 
 
 def _load_manifest_pairs(
@@ -106,6 +105,7 @@ def _train_one(
 ) -> tuple[Any, dict[str, Any]]:
     import torch
     import torch.nn.functional as functional
+    from forgegan.models.autoencoder import ConvAutoencoder
 
     _seed_everything(seed)
     model = ConvAutoencoder(width=width).to(device)
@@ -217,8 +217,11 @@ def run_matched_benchmark(
         type(seed) is not int or seed < 0 for seed in seeds
     ):
         raise ValueError("seeds must be unique non-negative integers")
-    if image_size < 16 or max_train < 2 or max_test < 1 or epochs < 1 or batch_size < 2:
-        raise ValueError("Invalid image size, sample limits, epochs or batch size")
+    if (
+        image_size < 16 or image_size % 8 != 0
+        or max_train < 3 or max_test < 1 or epochs < 1 or batch_size < 2
+    ):
+        raise ValueError("image_size must be >=16 and divisible by 8; train/test limits, epochs and batch size must be valid")
     if learning_rate <= 0 or not 0 < quantile < 1:
         raise ValueError("learning_rate must be positive and quantile in (0, 1)")
     if device == "auto":
@@ -228,16 +231,34 @@ def run_matched_benchmark(
 
     training = create_dataset(config)
     train_records = [r for r in training.records if not r.is_anomaly]
-    if len(train_records) < 2:
-        raise ValueError("At least two normal train images are required")
-    train_paths = {r.image_path.resolve() for r in train_records}
-    if len(train_paths) != len(train_records):
+    if len(train_records) < 3:
+        raise ValueError("At least three normal train images are required")
+    all_train_paths = {r.image_path.resolve() for r in train_records}
+    if len(all_train_paths) != len(train_records):
         raise ValueError("Duplicate normal training paths detected")
-    normal_images = []
-    for record in train_records[:max_train]:
+    selected_records = train_records[:max_train]
+    if len(selected_records) < 3:
+        raise ValueError("max_train must select at least three normal train images")
+    # Deterministic source-level holdout: fit images and threshold-calibration images
+    # are disjoint. The official test split remains completely untouched.
+    ordered = sorted(selected_records, key=lambda record: str(record.image_path))
+    calibration_count = max(1, int(round(len(ordered) * 0.2)))
+    calibration_records = ordered[:calibration_count]
+    fit_records = ordered[calibration_count:]
+    if len(fit_records) < 2:
+        raise ValueError("Need at least two fit images after train calibration holdout")
+    fit_paths = {r.image_path.resolve() for r in fit_records}
+    calibration_paths = {r.image_path.resolve() for r in calibration_records}
+    fit_images: list[np.ndarray] = []
+    calibration_images: list[np.ndarray] = []
+    for record in fit_records:
         with Image.open(record.image_path) as image:
-            normal_images.append(_rgb(image, image_size))
-    normal = np.stack(normal_images).astype(np.float32)
+            fit_images.append(_rgb(image, image_size))
+    for record in calibration_records:
+        with Image.open(record.image_path) as image:
+            calibration_images.append(_rgb(image, image_size))
+    normal = np.stack(fit_images).astype(np.float32)
+    calibration_normal = np.stack(calibration_images).astype(np.float32)
 
     held_out = create_dataset(
         DatasetConfig(
@@ -247,14 +268,14 @@ def run_matched_benchmark(
         )
     )
     test_paths = {r.image_path.resolve() for r in held_out.records}
-    if train_paths & test_paths:
+    if all_train_paths & test_paths:
         raise ValueError("Exact train/test source path overlap")
-    train_hashes = {_sha256(p) for p in train_paths}
+    train_hashes = {_sha256(p) for p in all_train_paths}
     if any(_sha256(p) in train_hashes for p in test_paths):
         raise ValueError("Exact train/test source content overlap")
 
     synthetic, clean_targets, provenance = _load_manifest_pairs(
-        Path(synthetic_manifest), config, train_paths, test_paths, image_size
+        Path(synthetic_manifest), config, fit_paths, test_paths, image_size
     )
     synthetic_array = np.stack(synthetic).astype(np.float32)
     target_array = np.stack(clean_targets).astype(np.float32)
@@ -304,7 +325,7 @@ def run_matched_benchmark(
                 augmented=augmented,
             )
             metrics = _arm_metrics(
-                model, normal, test_array, mask_array, labels_array,
+                model, calibration_normal, test_array, mask_array, labels_array,
                 device=device, batch_size=batch_size, quantile=quantile,
             )
             arms[name] = {"training": training_info, **metrics}
@@ -344,7 +365,7 @@ def run_matched_benchmark(
         "device": device,
         "settings": {
             "seeds": list(seeds), "image_size": image_size,
-            "normal_train_count": len(normal), "test_count": len(test_array),
+            "normal_fit_count": len(normal), "normal_threshold_calibration_count": len(calibration_normal), "test_count": len(test_array),
             "synthetic_count": len(synthetic_array), "epochs": epochs,
             "batch_size": batch_size, "learning_rate": learning_rate,
             "width": width, "normal_threshold_quantile": quantile,

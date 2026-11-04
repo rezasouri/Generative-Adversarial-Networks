@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import random
 from pathlib import Path
@@ -10,6 +9,7 @@ from typing import Any
 
 import numpy as np
 from PIL import Image
+
 from forgegan.data.registry import DatasetConfig, create_dataset
 from forgegan.evaluation.baseline import _image_score, _rgb, _sha256
 from forgegan.evaluation.metrics import binary_metrics
@@ -109,6 +109,7 @@ def _train_one(
 ) -> tuple[Any, dict[str, Any]]:
     import torch
     import torch.nn.functional as functional
+
     from forgegan.models.autoencoder import ConvAutoencoder
 
     _seed_everything(seed)

@@ -144,6 +144,27 @@ def build_parser() -> argparse.ArgumentParser:
     eval_parser.add_argument("--max-test", type=int, default=256)
     eval_parser.add_argument("--max-synthetic", type=int, default=64)
     eval_parser.add_argument("--normal-quantile", type=float, default=0.99)
+
+    benchmark_parser = subparsers.add_parser(
+        "benchmark-anomaly",
+        help="Train matched real-only and synthetic-denoising anomaly detectors.",
+    )
+    benchmark_parser.add_argument("--dataset", choices=["visa", "mvtec"], required=True)
+    benchmark_parser.add_argument("--root", type=Path, required=True)
+    benchmark_parser.add_argument("--category", required=True)
+    benchmark_parser.add_argument("--split-file", type=Path)
+    benchmark_parser.add_argument("--synthetic-manifest", type=Path, required=True)
+    benchmark_parser.add_argument("--output", type=Path, required=True)
+    benchmark_parser.add_argument("--seeds", type=int, nargs="+", default=[11, 22, 33])
+    benchmark_parser.add_argument("--image-size", type=int, default=64)
+    benchmark_parser.add_argument("--max-train", type=int, default=128)
+    benchmark_parser.add_argument("--max-test", type=int, default=512)
+    benchmark_parser.add_argument("--epochs", type=int, default=5)
+    benchmark_parser.add_argument("--batch-size", type=int, default=8)
+    benchmark_parser.add_argument("--learning-rate", type=float, default=0.001)
+    benchmark_parser.add_argument("--width", type=int, default=16)
+    benchmark_parser.add_argument("--quantile", type=float, default=0.99)
+    benchmark_parser.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
     return parser
 
 
@@ -276,6 +297,33 @@ def main() -> None:
             },
             None,
         )
+        return
+    if args.command == "benchmark-anomaly":
+        from forgegan.training.anomaly import run_matched_benchmark
+
+        config = DatasetConfig(
+            name=args.dataset,
+            root=args.root,
+            split="train",
+            category=args.category,
+            split_file=args.split_file,
+        )
+        result = run_matched_benchmark(
+            config,
+            args.synthetic_manifest,
+            args.output,
+            seeds=tuple(args.seeds),
+            image_size=args.image_size,
+            max_train=args.max_train,
+            max_test=args.max_test,
+            epochs=args.epochs,
+            batch_size=args.batch_size,
+            learning_rate=args.learning_rate,
+            width=args.width,
+            quantile=args.quantile,
+            device=args.device,
+        )
+        _write_report(result, None)
         return
     parser.print_help()
 

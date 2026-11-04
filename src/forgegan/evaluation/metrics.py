@@ -49,7 +49,7 @@ def binary_metrics(
         cum_fp = np.cumsum(group_size - group_tp, dtype=np.int64)
         tpr = np.r_[0.0, cum_tp / positives]
         fpr = np.r_[0.0, cum_fp / negatives]
-        auc = float(np.trapezoid(tpr, fpr))
+        auc = float(np.sum((tpr[1:] + tpr[:-1]) * np.diff(fpr) / 2))
         ap = float(np.sum((group_tp / positives) * (cum_tp / (cum_tp + cum_fp))))
     return {
         "n": int(truth.size),

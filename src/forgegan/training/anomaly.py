@@ -19,6 +19,7 @@ def _load_manifest_pairs(
     manifest_path: Path,
     config: DatasetConfig,
     train_paths: set[Path],
+    fit_paths: set[Path],
     test_paths: set[Path],
     size: int,
 ) -> tuple[list[np.ndarray], list[np.ndarray], dict[str, Any]]:
@@ -51,6 +52,9 @@ def _load_manifest_pairs(
             raise ValueError("Synthetic source is not an approved normal train image")
         if row.get("source_sha256") != _sha256(source):
             raise ValueError("Synthetic source SHA-256 mismatch")
+        # Calibration-holdout sources are deliberately excluded from model fitting.
+        if source not in fit_paths:
+            continue
         sources.add(source)
         resolved: list[Path] = []
         for field in ("image", "mask"):
@@ -275,8 +279,13 @@ def run_matched_benchmark(
         raise ValueError("Exact train/test source content overlap")
 
     synthetic, clean_targets, provenance = _load_manifest_pairs(
-        Path(synthetic_manifest), config, fit_paths, test_paths, image_size
+        Path(synthetic_manifest), config, all_train_paths, fit_paths, test_paths, image_size
     )
+    if not synthetic:
+        raise ValueError(
+            "No synthetic samples derive from fit images; generate more variants "
+            "or use a larger --max-train selection"
+        )
     synthetic_array = np.stack(synthetic).astype(np.float32)
     target_array = np.stack(clean_targets).astype(np.float32)
 

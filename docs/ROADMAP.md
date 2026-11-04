@@ -51,9 +51,10 @@ This roadmap distinguishes intended work from delivered functionality.
 
 ## Milestone 4 — Downstream evaluation
 
-- [ ] Real-only anomaly-detection baseline
-- [ ] Synthetic-augmented training protocol
-- [ ] Image-level and pixel-level metrics
+- [x] Normal-prototype pixel anomaly scoring baseline (non-learned)
+- [x] Train-only synthetic-assisted threshold calibration comparison
+- [ ] Matched learned real-only vs synthetic-augmented detector training protocol
+- [x] Image-level and pixel-level ROC-AUC/AP/precision/recall/F1 reporting
 - [ ] Multiple seeds and confidence intervals
 - [ ] Ablations by defect category and data budget
 

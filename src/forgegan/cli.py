@@ -128,6 +128,22 @@ def build_parser() -> argparse.ArgumentParser:
     synthesis_parser.add_argument("--angle", type=float, default=30.0)
     synthesis_parser.add_argument("--count", type=int, default=32)
     synthesis_parser.add_argument("--seed", type=int, default=42)
+
+    eval_parser = subparsers.add_parser(
+        "evaluate-synthetic",
+        help="Compare real-only vs synthetic-calibrated thresholds on held-out test.",
+    )
+    eval_parser.add_argument("--dataset", choices=["visa", "mvtec"], required=True)
+    eval_parser.add_argument("--root", type=Path, required=True)
+    eval_parser.add_argument("--category", required=True)
+    eval_parser.add_argument("--split-file", type=Path, help="VisA 1cls.csv path")
+    eval_parser.add_argument("--synthetic-manifest", type=Path, required=True)
+    eval_parser.add_argument("--output", type=Path, required=True)
+    eval_parser.add_argument("--image-size", type=int, default=64)
+    eval_parser.add_argument("--max-train", type=int, default=64)
+    eval_parser.add_argument("--max-test", type=int, default=256)
+    eval_parser.add_argument("--max-synthetic", type=int, default=64)
+    eval_parser.add_argument("--normal-quantile", type=float, default=0.99)
     return parser
 
 
@@ -222,6 +238,42 @@ def main() -> None:
             generate_synthetic_dataset(
                 config, args.output_dir, spec=spec, count=args.count, seed=args.seed
             ),
+            None,
+        )
+        return
+    if args.command == "evaluate-synthetic":
+        from forgegan.evaluation.baseline import (
+            EvaluationSettings,
+            compare_real_vs_synthetic,
+            save_comparison,
+        )
+
+        settings = EvaluationSettings(
+            image_size=args.image_size,
+            max_train=args.max_train,
+            max_test=args.max_test,
+            max_synthetic=args.max_synthetic,
+            normal_quantile=args.normal_quantile,
+        )
+        config = DatasetConfig(
+            name=args.dataset,
+            root=args.root,
+            split="train",
+            category=args.category,
+            split_file=args.split_file,
+        )
+        report = compare_real_vs_synthetic(
+            config, args.synthetic_manifest, settings=settings
+        )
+        save_comparison(report, args.output)
+        _write_report(
+            {
+                "report_path": str(args.output),
+                "dataset": report["dataset"],
+                "category": report["category"],
+                "test_count": report["test_count"],
+                "arms": report["arms"],
+            },
             None,
         )
         return

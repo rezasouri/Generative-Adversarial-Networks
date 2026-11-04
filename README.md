@@ -53,10 +53,14 @@ forgegan train-cgan --config configs/experiments/mvtec-all-categories-cgan.yaml
 # Procedural defect generation uses normal train images only:
 forgegan synthesize-defects --dataset mvtec --root datasets/mvtec_ad \
   --category bottle --output-dir runs/procedural-bottle --kind spot --count 32
+# Train-only threshold calibration vs normal-only threshold on held-out test:
+forgegan evaluate-synthetic --dataset mvtec --root datasets/mvtec_ad \
+  --category bottle --synthetic-manifest runs/procedural-bottle/manifest.json \
+  --output reports/bottle-threshold-comparison.json
 pytest
 ```
 
-The CLI provides dataset audits and validation. The shared Python dataset registry, spatial transforms and optional PyTorch DataLoader are documented in [DATA_PIPELINE.md](docs/DATA_PIPELINE.md). Dataset inspection and versioned experiment configs are covered in [EXPERIMENT_TOOLING.md](docs/EXPERIMENT_TOOLING.md). The adapters do not download or modify source datasets. Unconditional DCGAN and normal-image category-conditional GAN training are available; a procedural defect-synthesis baseline is available; **learned mask-conditioned defect synthesis** and downstream evaluation remain planned. See [DCGAN training guide](docs/DCGAN_TRAINING.md) and [conditional GAN guide](docs/CONDITIONAL_GAN.md), and [procedural synthesis guide](docs/PROCEDURAL_SYNTHESIS.md).
+The CLI provides dataset audits and validation. The shared Python dataset registry, spatial transforms and optional PyTorch DataLoader are documented in [DATA_PIPELINE.md](docs/DATA_PIPELINE.md). Dataset inspection and versioned experiment configs are covered in [EXPERIMENT_TOOLING.md](docs/EXPERIMENT_TOOLING.md). The adapters do not download or modify source datasets. Unconditional DCGAN and normal-image category-conditional GAN training are available; a procedural defect-synthesis baseline is available; **learned mask-conditioned defect synthesis** and downstream evaluation remain planned. See [exploratory downstream evaluation](docs/DOWNSTREAM_EVALUATION.md) and [DCGAN training guide](docs/DCGAN_TRAINING.md) and [conditional GAN guide](docs/CONDITIONAL_GAN.md), and [procedural synthesis guide](docs/PROCEDURAL_SYNTHESIS.md).
 
 ## Project principles
 

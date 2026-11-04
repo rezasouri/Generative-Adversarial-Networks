@@ -55,7 +55,7 @@ This roadmap distinguishes intended work from delivered functionality.
 - [x] Train-only synthetic-assisted threshold calibration comparison
 - [ ] Matched learned real-only vs synthetic-augmented detector training protocol
 - [x] Image-level and pixel-level ROC-AUC/AP/precision/recall/F1 reporting
-- [ ] Multiple seeds and confidence intervals
+- [x] Multi-seed runs with per-seed metrics and across-seed uncertainty summaries
 - [ ] Ablations by defect category and data budget
 
 ## Milestone 5 — Modern comparison and presentation

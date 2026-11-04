@@ -5,11 +5,9 @@ from pathlib import Path
 
 import pytest
 
-torch = pytest.importorskip("torch")
 from PIL import Image, ImageDraw
 
 from forgegan.data.registry import DatasetConfig
-from forgegan.models.autoencoder import ConvAutoencoder
 from forgegan.synthesis.procedural import DefectSpec, generate_synthetic_dataset
 from forgegan.training.anomaly import run_matched_benchmark
 
@@ -45,6 +43,9 @@ def _fixture(root: Path) -> tuple[DatasetConfig, Path]:
 
 
 def test_autoencoder_shape_and_parameter_count() -> None:
+    torch = pytest.importorskip("torch")
+    from forgegan.models.autoencoder import ConvAutoencoder
+
     model = ConvAutoencoder(width=4)
     result = model(torch.rand(2, 3, 32, 32))
     assert result.shape == (2, 3, 32, 32)
@@ -52,6 +53,7 @@ def test_autoencoder_shape_and_parameter_count() -> None:
 
 
 def test_matched_benchmark_smoke_and_report(tmp_path: Path) -> None:
+    pytest.importorskip("torch")
     config, manifest = _fixture(tmp_path / "mvtec")
     output = tmp_path / "report.json"
     result = run_matched_benchmark(
@@ -80,6 +82,7 @@ def test_matched_benchmark_smoke_and_report(tmp_path: Path) -> None:
 
 
 def test_rejects_invalid_image_size(tmp_path: Path) -> None:
+    pytest.importorskip("torch")
     config, manifest = _fixture(tmp_path / "mvtec")
     with pytest.raises(ValueError, match="divisible by 8"):
         run_matched_benchmark(
@@ -89,6 +92,7 @@ def test_rejects_invalid_image_size(tmp_path: Path) -> None:
 
 
 def test_report_does_not_overwrite(tmp_path: Path) -> None:
+    pytest.importorskip("torch")
     config, manifest = _fixture(tmp_path / "mvtec")
     output = tmp_path / "report.json"
     output.write_text("{}")

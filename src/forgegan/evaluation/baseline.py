@@ -12,7 +12,6 @@ import numpy as np
 from PIL import Image
 
 from forgegan.data.registry import DatasetConfig, create_dataset
-from forgegan.data.transforms import SpatialTransform
 from forgegan.evaluation.metrics import binary_metrics
 
 

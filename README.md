@@ -57,6 +57,10 @@ forgegan synthesize-defects --dataset mvtec --root datasets/mvtec_ad \
 forgegan evaluate-synthetic --dataset mvtec --root datasets/mvtec_ad \
   --category bottle --synthetic-manifest runs/procedural-bottle/manifest.json \
   --output reports/bottle-threshold-comparison.json
+# Matched learned reconstruction baseline (real-only vs synthetic denoising):
+forgegan benchmark-anomaly --dataset mvtec --root datasets/mvtec_ad \
+  --category bottle --synthetic-manifest runs/procedural-bottle/manifest.json \
+  --output reports/bottle-matched-benchmark.json --seeds 11 22 33
 pytest
 ```
 

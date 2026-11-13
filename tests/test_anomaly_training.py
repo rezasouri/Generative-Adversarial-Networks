@@ -79,8 +79,8 @@ def test_matched_benchmark_smoke_and_report(tmp_path: Path) -> None:
         report["seed_results"][0]["arms"]["real_plus_synthetic"]["training"]["optimizer_steps"]
         == 2
     )
-    assert report["summary"]["real_only"]["pixel"]["n_seeds"] == 1
-    assert report["summary"]["real_plus_synthetic"]["image"]["n_seeds"] == 1
+    assert report["summary"]["real_only"]["pixel"]["roc_auc"]["n_seeds"] == 1
+    assert report["summary"]["real_plus_synthetic"]["image"]["roc_auc"]["n_seeds"] == 1
 
 
 def test_rejects_invalid_image_size(tmp_path: Path) -> None:

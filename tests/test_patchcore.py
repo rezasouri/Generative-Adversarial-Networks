@@ -95,6 +95,20 @@ def test_patchcore_benchmark_smoke(tmp_path: Path) -> None:
     assert report["image"]["n"] == 2
     assert result["memory_bank_count"] <= 24
 
+    from forgegan.evaluation.patchcore_diagnostics import run_patchcore_diagnostics
+
+    diagnostics_dir = tmp_path / "diagnostics"
+    diagnostic_result = run_patchcore_diagnostics(
+        config, output, diagnostics_dir, device="cpu", batch_size=2
+    )
+    assert diagnostic_result["threshold_reproduction_passed"] is True
+    assert (diagnostics_dir / "index.html").is_file()
+    assert (diagnostics_dir / "diagnostics.json").is_file()
+    html_report = (diagnostics_dir / "index.html").read_text(encoding="utf-8")
+    assert "Ground truth" in html_report
+    assert "Anomaly heatmap" in html_report
+    assert "False-positive" in html_report or "false-positive" in html_report
+
 
 def test_patchcore_rejects_existing_output(tmp_path: Path) -> None:
     pytest.importorskip("torch")

@@ -15,6 +15,7 @@ class ResNetFeatureExtractor:
         from torchvision.models import ResNet18_Weights, resnet18
 
         weights = ResNet18_Weights.DEFAULT if pretrained else None
+        self.pretrained = pretrained
         self.model = resnet18(weights=weights)
         self.model.eval().to(device)
         self.device = device
@@ -38,7 +39,7 @@ class ResNetFeatureExtractor:
 
     @property
     def weights(self) -> str:
-        return "imagenet1k_v1" if self.model.fc.weight.shape[0] == 1000 else "random"
+        return "imagenet1k_v1" if self.pretrained else "random"
 
     @property
     def device_name(self) -> str:

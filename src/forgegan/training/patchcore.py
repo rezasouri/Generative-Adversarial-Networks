@@ -125,7 +125,6 @@ def run_patchcore_benchmark(
         raise ValueError("Need at least two fit images after calibration holdout")
 
     all_train_paths = {record.image_path.resolve() for record in normal_records}
-    fit_paths = {record.image_path.resolve() for record in fit_records}
     test_dataset = create_dataset(
         DatasetConfig(
             name=config.name,
@@ -230,7 +229,8 @@ def run_patchcore_benchmark(
             "memory_source": "normal-only official train fit subset",
         },
         "limitations": [
-            "PatchCore-style ResNet18 layer2/layer3 implementation; not the official Anomalib implementation.",
+            "PatchCore-style ResNet18 layer2/layer3 implementation; "
+            "not the official Anomalib implementation.",
             "Greedy coreset is bounded to a deterministic candidate subset for runtime.",
             "No perceptual near-duplicate or product-instance leakage audit.",
             "A max-test subset is not a full official benchmark.",

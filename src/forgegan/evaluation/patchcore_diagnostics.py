@@ -320,7 +320,8 @@ td:first-child,th:first-child{{text-align:left}}
 <div class="note"><b>Threshold policy:</b> candidates come from normal-only train calibration maps.
 Test metrics are descriptive; test labels never select a threshold.</div>
 <h2>Calibration-derived threshold analysis</h2>
-<table><thead><tr><th>Calibration quantile</th><th>Threshold</th><th>Test precision</th><th>Test recall</th><th>Test F1</th></tr></thead>
+<table><thead><tr><th>Calibration quantile</th><th>Threshold</th>
+<th>Test precision</th><th>Test recall</th><th>Test F1</th></tr></thead>
 <tbody>{threshold_html}</tbody>
 </table>
 <h2>Test samples ranked by false-positive pixel count</h2>

@@ -149,6 +149,9 @@ def run_patchcore_benchmark(
     if not test_records or len({record.is_anomaly for record in test_records}) != 2:
         raise ValueError("Test subset must contain normal and anomalous samples")
 
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
     extractor = ResNetFeatureExtractor(pretrained=pretrained, device=device)
     fit_images = _image_tensor(
         [record.image_path for record in fit_records], image_size

@@ -46,6 +46,7 @@ class ResNetFeatureExtractor:
         return self.device
 
     def __call__(self, images: Any) -> Any:
+        import torch
         import torch.nn.functional as functional
 
         images = (images - self.mean) / self.std
@@ -121,7 +122,12 @@ def nearest_neighbor_scores(
     memory = np.asarray(memory_bank, dtype=np.float32)
     if query.ndim != 2 or memory.ndim != 2 or query.shape[1] != memory.shape[1]:
         raise ValueError("query and memory embeddings must be compatible matrices")
-    if not len(query) or not len(memory) or not np.isfinite(query).all() or not np.isfinite(memory).all():
+    if (
+        not len(query)
+        or not len(memory)
+        or not np.isfinite(query).all()
+        or not np.isfinite(memory).all()
+    ):
         raise ValueError("query and memory embeddings must be nonempty and finite")
     if query_batch_size < 1 or memory_batch_size < 1:
         raise ValueError("batch sizes must be positive")

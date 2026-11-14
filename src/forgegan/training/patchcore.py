@@ -10,6 +10,7 @@ import numpy as np
 from PIL import Image
 
 from forgegan.data.registry import DatasetConfig, create_dataset
+from forgegan.evaluation.baseline import _rgb, _sha256
 from forgegan.evaluation.metrics import binary_metrics
 from forgegan.models.patchcore import (
     ResNetFeatureExtractor,
@@ -18,14 +19,13 @@ from forgegan.models.patchcore import (
 )
 
 
-def _image_tensor(paths: list[Path], size: int, batch_size: int) -> np.ndarray:
+def _image_tensor(paths: list[Path], size: int) -> np.ndarray:
     """Load RGB images as contiguous float32 NHWC arrays in [0, 1]."""
-    from forgegan.evaluation.baseline import _rgb
-
-    return np.stack([
-        _rgb(Image.open(path).convert("RGB"), size)
-        for path in paths
-    ]).astype(np.float32)
+    images = []
+    for path in paths:
+        with Image.open(path) as image:
+            images.append(_rgb(image, size))
+    return np.stack(images).astype(np.float32)
 
 
 def _extract_embeddings(
@@ -141,12 +141,10 @@ def run_patchcore_benchmark(
     if all_train_paths & test_paths:
         raise ValueError("Exact train/test path overlap")
     train_hashes = {
-        __import__("hashlib").sha256(path.read_bytes()).hexdigest()
-        for path in all_train_paths
+        _sha256(path) for path in all_train_paths
     }
     if any(
-        __import__("hashlib").sha256(path.read_bytes()).hexdigest() in train_hashes
-        for path in test_paths
+        _sha256(path) in train_hashes for path in test_paths
     ):
         raise ValueError("Exact train/test content overlap")
     if not test_records or len({record.is_anomaly for record in test_records}) != 2:
@@ -154,13 +152,13 @@ def run_patchcore_benchmark(
 
     extractor = ResNetFeatureExtractor(pretrained=pretrained, device=device)
     fit_images = _image_tensor(
-        [record.image_path for record in fit_records], image_size, batch_size
+        [record.image_path for record in fit_records], image_size
     )
     calibration_images = _image_tensor(
-        [record.image_path for record in calibration_records], image_size, batch_size
+        [record.image_path for record in calibration_records], image_size
     )
     test_images = _image_tensor(
-        [record.image_path for record in test_records], image_size, batch_size
+        [record.image_path for record in test_records], image_size
     )
     fit_embeddings, grid = _extract_embeddings(
         extractor, fit_images, device=device, batch_size=batch_size

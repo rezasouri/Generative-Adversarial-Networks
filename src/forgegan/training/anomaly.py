@@ -152,7 +152,11 @@ def _train_one(
         "optimizer_steps": epochs * steps_per_epoch,
         "batch_size": batch_size,
         "history": history,
-        "training_mode": "normal_plus_synthetic_denoising" if augmented else "normal_identity_reconstruction",
+        "training_mode": (
+            "normal_plus_synthetic_denoising"
+            if augmented
+            else "normal_identity_reconstruction"
+        ),
     }
 
 
@@ -226,7 +230,10 @@ def run_matched_benchmark(
         image_size < 16 or image_size % 8 != 0
         or max_train < 3 or max_test < 1 or epochs < 1 or batch_size < 2
     ):
-        raise ValueError("image_size must be >=16 and divisible by 8; train/test limits, epochs and batch size must be valid")
+        raise ValueError(
+            "image_size must be >=16 and divisible by 8; "
+            "train/test limits, epochs and batch size must be valid"
+        )
     if learning_rate <= 0 or not 0 < quantile < 1:
         raise ValueError("learning_rate must be positive and quantile in (0, 1)")
     if device == "auto":
@@ -253,7 +260,6 @@ def run_matched_benchmark(
     if len(fit_records) < 2:
         raise ValueError("Need at least two fit images after train calibration holdout")
     fit_paths = {r.image_path.resolve() for r in fit_records}
-    calibration_paths = {r.image_path.resolve() for r in calibration_records}
     fit_images: list[np.ndarray] = []
     calibration_images: list[np.ndarray] = []
     for record in fit_records:
@@ -357,7 +363,11 @@ def run_matched_benchmark(
                     summary[arm][level][metric] = None
                     continue
                 mean = float(np.mean(values))
-                sem = float(np.std(values, ddof=1) / np.sqrt(len(values))) if len(values) > 1 else 0.0
+                sem = (
+                    float(np.std(values, ddof=1) / np.sqrt(len(values)))
+                    if len(values) > 1
+                    else 0.0
+                )
                 summary[arm][level][metric] = {
                     "mean": mean,
                     "std": float(np.std(values, ddof=1)) if len(values) > 1 else 0.0,
@@ -375,7 +385,9 @@ def run_matched_benchmark(
         "device": device,
         "settings": {
             "seeds": list(seeds), "image_size": image_size,
-            "normal_fit_count": len(normal), "normal_threshold_calibration_count": len(calibration_normal), "test_count": len(test_array),
+            "normal_fit_count": len(normal),
+            "normal_threshold_calibration_count": len(calibration_normal),
+            "test_count": len(test_array),
             "synthetic_count": len(synthetic_array), "epochs": epochs,
             "batch_size": batch_size, "learning_rate": learning_rate,
             "width": width, "normal_threshold_quantile": quantile,
@@ -399,7 +411,7 @@ def run_matched_benchmark(
     destination.parent.mkdir(parents=True, exist_ok=True)
     with destination.open("x", encoding="utf-8") as stream:
         json.dump(report, stream, indent=2, allow_nan=False)
-        stream.write("\\n")
+        stream.write("\n")
     return {
         "report_path": str(destination),
         "dataset": config.name,

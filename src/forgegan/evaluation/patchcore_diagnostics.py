@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image
 
 from forgegan.data.registry import DatasetConfig, create_dataset
 from forgegan.models.patchcore import ResNetFeatureExtractor, greedy_coreset
@@ -59,7 +59,6 @@ def _mask_image(mask: np.ndarray) -> Image.Image:
 
 
 def _threshold_table(
-    labels: np.ndarray,
     masks: np.ndarray,
     scores: np.ndarray,
     calibration_maps: np.ndarray,
@@ -190,7 +189,7 @@ def run_patchcore_diagnostics(
     predicted = test_maps >= stored_threshold
 
     threshold_rows = _threshold_table(
-        label_array, mask_array, test_maps, calibration_maps
+        mask_array, test_maps, calibration_maps
     )
     destination = Path(output_dir)
     destination.mkdir(parents=True, exist_ok=False)

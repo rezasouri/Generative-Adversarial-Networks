@@ -165,6 +165,28 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark_parser.add_argument("--width", type=int, default=16)
     benchmark_parser.add_argument("--quantile", type=float, default=0.99)
     benchmark_parser.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
+
+    patchcore_parser = subparsers.add_parser(
+        "benchmark-patchcore",
+        help="Evaluate a ResNet18 PatchCore-style memory-bank anomaly detector.",
+    )
+    patchcore_parser.add_argument("--dataset", choices=["visa", "mvtec"], required=True)
+    patchcore_parser.add_argument("--root", type=Path, required=True)
+    patchcore_parser.add_argument("--category", required=True)
+    patchcore_parser.add_argument("--split-file", type=Path)
+    patchcore_parser.add_argument("--output", type=Path, required=True)
+    patchcore_parser.add_argument("--image-size", type=int, default=224)
+    patchcore_parser.add_argument("--max-train", type=int, default=128)
+    patchcore_parser.add_argument("--max-test", type=int, default=512)
+    patchcore_parser.add_argument("--memory-size", type=int, default=2048)
+    patchcore_parser.add_argument("--batch-size", type=int, default=16)
+    patchcore_parser.add_argument("--quantile", type=float, default=0.99)
+    patchcore_parser.add_argument("--seed", type=int, default=42)
+    patchcore_parser.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
+    patchcore_parser.add_argument(
+        "--no-pretrained", action="store_true",
+        help="Use random ResNet18 weights for offline smoke tests only.",
+    )
     return parser
 
 
@@ -322,6 +344,31 @@ def main() -> None:
             width=args.width,
             quantile=args.quantile,
             device=args.device,
+        )
+        _write_report(result, None)
+        return
+    if args.command == "benchmark-patchcore":
+        from forgegan.training.patchcore import run_patchcore_benchmark
+
+        config = DatasetConfig(
+            name=args.dataset,
+            root=args.root,
+            split="train",
+            category=args.category,
+            split_file=args.split_file,
+        )
+        result = run_patchcore_benchmark(
+            config,
+            args.output,
+            image_size=args.image_size,
+            max_train=args.max_train,
+            max_test=args.max_test,
+            memory_size=args.memory_size,
+            batch_size=args.batch_size,
+            quantile=args.quantile,
+            pretrained=not args.no_pretrained,
+            device=args.device,
+            seed=args.seed,
         )
         _write_report(result, None)
         return

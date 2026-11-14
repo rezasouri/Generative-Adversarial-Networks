@@ -13,13 +13,13 @@ import numpy as np
 from PIL import Image
 
 from forgegan.data.registry import DatasetConfig, create_dataset
+from forgegan.evaluation.metrics import binary_metrics
 from forgegan.models.patchcore import ResNetFeatureExtractor, greedy_coreset
 from forgegan.training.patchcore import (
     _extract_embeddings,
     _image_tensor,
     _score_images,
 )
-from forgegan.evaluation.metrics import binary_metrics
 
 
 def _png_data(image: Image.Image) -> str:
@@ -284,7 +284,8 @@ def run_patchcore_diagnostics(
             f'<article><h2>{title}</h2><p>Label: {item["label"]} · '
             f'Image score: {item["image_score"]:.4f} · FP pixels: {item["fp"]:,} · '
             f'TP: {item["tp"]:,} · FN: {item["fn"]:,} · '
-            f'FP rate: {item["false_positive_rate"]:.3%}</p><div class="images">{images}</div></article>'
+            f'FP rate: {item["false_positive_rate"]:.3%}</p>'
+            f'<div class="images">{images}</div></article>'
         )
 
     threshold_html = "".join(
@@ -309,16 +310,19 @@ article{{background:#1b2330;border:1px solid #354154;border-radius:12px;padding:
 figure{{margin:0}}img{{width:100%;height:auto;border-radius:7px;background:#080b10}}
 figcaption{{color:#aab8cc;font-size:13px;margin-top:5px}}
 table{{border-collapse:collapse;width:100%;margin:18px 0;background:#1b2330}}
-td,th{{padding:10px;border:1px solid #354154;text-align:right}}td:first-child,th:first-child{{text-align:left}}
+td,th{{padding:10px;border:1px solid #354154;text-align:right}}
+td:first-child,th:first-child{{text-align:left}}
 .note{{background:#202d3d;padding:14px;border-radius:8px}}
 </style></head><body><main>
 <h1>PatchCore visual diagnostics: {html.escape(config.category or "")}</h1>
-<p>Recomputed from the saved benchmark settings and exact test manifest. No model weights were trained.</p>
-<div class="note"><b>Threshold policy:</b> every candidate threshold is computed from normal-only train calibration maps.
-Test metrics below are descriptive only; test labels are never used to select a threshold.</div>
+<p>Recomputed from the saved benchmark settings and exact test manifest.</p>
+<p>No model weights were trained.</p>
+<div class="note"><b>Threshold policy:</b> candidates come from normal-only train calibration maps.
+Test metrics are descriptive; test labels never select a threshold.</div>
 <h2>Calibration-derived threshold analysis</h2>
 <table><thead><tr><th>Calibration quantile</th><th>Threshold</th><th>Test precision</th><th>Test recall</th><th>Test F1</th></tr></thead>
-<tbody>{threshold_html}</tbody></table>
+<tbody>{threshold_html}</tbody>
+</table>
 <h2>Test samples ranked by false-positive pixel count</h2>
 {''.join(table_rows)}
 </main></body></html>"""

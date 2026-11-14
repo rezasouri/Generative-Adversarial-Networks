@@ -145,6 +145,9 @@ def run_patchcore_diagnostics(
             "refusing to generate misleading diagnostics"
         )
 
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
     extractor = ResNetFeatureExtractor(pretrained=pretrained, device=device)
     fit_images = _image_tensor([r.image_path for r in fit_records], image_size)
     calibration_images = _image_tensor(

@@ -71,3 +71,5 @@ This roadmap distinguishes intended work from delivered functionality.
 ## Acceptance criteria
 
 A milestone is complete only when its code, tests, documentation and reproducible evidence are present. A model generating plausible images is not sufficient evidence that synthetic data improves anomaly detection.
+
+- [x] PatchCore visual diagnostics: per-image heatmaps, false-positive ranking and calibration-only threshold analysis

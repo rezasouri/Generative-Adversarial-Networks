@@ -187,6 +187,19 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-pretrained", action="store_true",
         help="Use random ResNet18 weights for offline smoke tests only.",
     )
+
+    diagnostics_parser = subparsers.add_parser(
+        "diagnose-patchcore",
+        help="Render PatchCore test heatmaps, false-positive ranking and threshold diagnostics.",
+    )
+    diagnostics_parser.add_argument("--dataset", choices=["visa", "mvtec"], required=True)
+    diagnostics_parser.add_argument("--root", type=Path, required=True)
+    diagnostics_parser.add_argument("--category", required=True)
+    diagnostics_parser.add_argument("--split-file", type=Path)
+    diagnostics_parser.add_argument("--benchmark-report", type=Path, required=True)
+    diagnostics_parser.add_argument("--output-dir", type=Path, required=True)
+    diagnostics_parser.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
+    diagnostics_parser.add_argument("--batch-size", type=int)
     return parser
 
 
@@ -369,6 +382,25 @@ def main() -> None:
             pretrained=not args.no_pretrained,
             device=args.device,
             seed=args.seed,
+        )
+        _write_report(result, None)
+        return
+    if args.command == "diagnose-patchcore":
+        from forgegan.evaluation.patchcore_diagnostics import run_patchcore_diagnostics
+
+        config = DatasetConfig(
+            name=args.dataset,
+            root=args.root,
+            split="train",
+            category=args.category,
+            split_file=args.split_file,
+        )
+        result = run_patchcore_diagnostics(
+            config,
+            args.benchmark_report,
+            args.output_dir,
+            device=args.device,
+            batch_size=args.batch_size,
         )
         _write_report(result, None)
         return

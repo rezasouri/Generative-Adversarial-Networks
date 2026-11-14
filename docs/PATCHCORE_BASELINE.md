@@ -48,3 +48,24 @@ The JSON report contains image-level and pixel-level ROC-AUC, average precision,
 - No multi-category aggregate benchmark, multi-seed uncertainty analysis, or comparison against official Anomalib has yet been completed.
 - The default CLI test cap is a development convenience, not a publishable full benchmark.
 - Pretrained weights require network access on first use and must be reported accurately.
+
+
+## Visual diagnostics
+
+After a benchmark run, recreate the feature bank and test anomaly maps from the saved report:
+
+```bash
+forgegan diagnose-patchcore \
+  --dataset mvtec \
+  --root datasets/mvtec_ad \
+  --category bottle \
+  --benchmark-report reports/bottle-patchcore.json \
+  --output-dir reports/bottle-patchcore-diagnostics \
+  --device auto
+```
+
+Open `reports/bottle-patchcore-diagnostics/index.html` in a browser. It shows each test image alongside its ground-truth mask, anomaly heatmap, overlay and thresholded prediction. Samples are ranked by false-positive pixel count. The accompanying `diagnostics.json` contains per-image counts and threshold analysis.
+
+Threshold candidates (95%, 97.5%, 99%, 99.5%, 99.9%) are computed only from the normal-only train calibration maps. Test metrics at those thresholds are descriptive diagnostics; the command does not select a threshold using test labels. The command verifies the saved test manifest and reproduces the saved calibration threshold before rendering. If the test ordering, model weights or effective benchmark settings no longer match, it fails rather than silently producing a mismatched report.
+
+The HTML embeds its images and can be opened locally without a web server. It reruns feature extraction and nearest-neighbor scoring; no detector training occurs.

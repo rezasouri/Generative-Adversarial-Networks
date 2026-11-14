@@ -64,6 +64,10 @@ forgegan benchmark-anomaly --dataset mvtec --root datasets/mvtec_ad \
 # PatchCore-style pretrained ResNet18 memory-bank baseline:
 forgegan benchmark-patchcore --dataset mvtec --root datasets/mvtec_ad \
   --category bottle --output reports/bottle-patchcore.json --device auto
+# Recreate test heatmaps and calibration-only threshold diagnostics:
+forgegan diagnose-patchcore --dataset mvtec --root datasets/mvtec_ad \
+  --category bottle --benchmark-report reports/bottle-patchcore.json \
+  --output-dir reports/bottle-patchcore-diagnostics --device auto
 pytest
 ```
 

@@ -61,6 +61,9 @@ forgegan evaluate-synthetic --dataset mvtec --root datasets/mvtec_ad \
 forgegan benchmark-anomaly --dataset mvtec --root datasets/mvtec_ad \
   --category bottle --synthetic-manifest runs/procedural-bottle/manifest.json \
   --output reports/bottle-matched-benchmark.json --seeds 11 22 33
+# PatchCore-style pretrained ResNet18 memory-bank baseline:
+forgegan benchmark-patchcore --dataset mvtec --root datasets/mvtec_ad \
+  --category bottle --output reports/bottle-patchcore.json --device auto
 pytest
 ```
 
